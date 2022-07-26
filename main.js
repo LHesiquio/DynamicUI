@@ -6,7 +6,7 @@ if (img.complete) {
     jazminGG(img);
 } else {
     // agregamos evento de carga de imagen
-    img.addEventListener('load', function() {
+    img.addEventListener('load', function () {
         jazminGG(img);
     });
 }
@@ -15,7 +15,7 @@ if (img.complete) {
 function jazminGG(img) {
     let palette = colorThief.getPalette(img, 5);
     // ordenamos por valor más alto
-    palette.sort(function(a, b) {
+    palette.sort(function (a, b) {
         return b[1] - a[1];
     });
     // Si el primer color es muy oscuro, creamos un color más claro que sea menor a 255 y lo añadimos al principio
@@ -27,7 +27,7 @@ function jazminGG(img) {
         palette.unshift(newColor);
     }
     // Si el primer color es muy oscuro, creamos un color más claro que sea menor a 255 y lo añadimos al principio
-    if (palette[0][1] > 200 && palette[0][1] < 240) {
+    if (palette[0][1] > 200 && palette[0][1] < 245) {
         let newColor = [0, 0, 0];
         for (let i = 0; i < 3; i++) {
             newColor[i] = palette[0][i] + (255 - palette[0][i]) / 2.25;
@@ -35,13 +35,13 @@ function jazminGG(img) {
         // verificamos en que posicion de newColor esta el numero más alto
         let max = Math.max(newColor[0], newColor[1], newColor[2]);
         let index = newColor.indexOf(max);
-        if (newColor[index] < 241) {
-            let optimizeColor = newColor[index] - 241;
+        if (newColor[index] < 245) {
+            let optimizeColor = newColor[index] - 255;
             newColor[0] = newColor[0] - optimizeColor;
             newColor[1] = newColor[1] - optimizeColor;
             newColor[2] = newColor[2] - optimizeColor;
         } else {
-            let optimizeColor = newColor[index] - 241;
+            let optimizeColor = newColor[index] - 255;
             newColor[0] = newColor[0] - optimizeColor;
             newColor[1] = newColor[1] - optimizeColor;
             newColor[2] = newColor[2] - optimizeColor;
@@ -56,8 +56,15 @@ function jazminGG(img) {
         }
         palette.push(newColor);
     }
+    // si el primer color tiene alguno de sus valores inferiores a 200, añadimos color gris claro al principio
+    if (palette[0][0] < 200 || palette[0][1] < 200 || palette[0][2] < 200) {
+        let newColor = [255, 255, 255];
+        for (let i = 0; i < 3; i++) {
+            newColor[i] = palette[0][i] + (255 - palette[0][i]) / 1.35;
+        }
+        palette.unshift(newColor);
+    }
 
-    console.log(palette);
     let lengthPalette = palette.length;
 
     // creamos un div #palette con los colores de la paleta
@@ -87,55 +94,10 @@ function jazminGG(img) {
         colorDiv.style.cursor = 'pointer';
         colorDiv.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
         colorDiv.style.borderRadius = '50px';
-        colorDiv.style.transition = 'all 0.3s';
-        colorDiv.style.webkitTransition = 'all 0.3s';
-        colorDiv.style.mozTransition = 'all 0.3s';
-        colorDiv.style.oTransition = 'all 0.3s';
-        colorDiv.style.msTransition = 'all 0.3s';
-        colorDiv.style.animation = 'fadeIn 0.3s';
-        colorDiv.style.webkitAnimation = 'fadeIn 0.3s';
-        colorDiv.style.mozAnimation = 'fadeIn 0.3s';
-        colorDiv.style.oAnimation = 'fadeIn 0.3s';
-        colorDiv.style.msAnimation = 'fadeIn 0.3s';
-        colorDiv.style.animationFillMode = 'forwards';
-        colorDiv.style.webkitAnimationFillMode = 'forwards';
-        colorDiv.style.mozAnimationFillMode = 'forwards';
-        colorDiv.style.oAnimationFillMode = 'forwards';
-        colorDiv.style.msAnimationFillMode = 'forwards';
-        colorDiv.style.animationDuration = '0.3s';
-        colorDiv.style.webkitAnimationDuration = '0.3s';
-        colorDiv.style.mozAnimationDuration = '0.3s';
-        colorDiv.style.oAnimationDuration = '0.3s';
-        colorDiv.style.msAnimationDuration = '0.3s';
-        colorDiv.style.animationTimingFunction = 'ease-in-out';
-        colorDiv.style.webkitAnimationTimingFunction = 'ease-in-out';
-        colorDiv.style.mozAnimationTimingFunction = 'ease-in-out';
-        colorDiv.style.oAnimationTimingFunction = 'ease-in-out';
-        colorDiv.style.msAnimationTimingFunction = 'ease-in-out';
-        colorDiv.style.animationDirection = 'alternate';
-        colorDiv.style.webkitAnimationDirection = 'alternate';
-        colorDiv.style.mozAnimationDirection = 'alternate';
-        colorDiv.style.oAnimationDirection = 'alternate';
-        colorDiv.style.msAnimationDirection = 'alternate';
-        colorDiv.style.animationIterationCount = 'infinite';
-        colorDiv.style.webkitAnimationIterationCount = 'infinite';
-        colorDiv.style.mozAnimationIterationCount = 'infinite';
-        colorDiv.style.oAnimationIterationCount = 'infinite';
-        colorDiv.style.msAnimationIterationCount = 'infinite';
-        colorDiv.style.animationPlayState = 'running';
-        colorDiv.style.webkitAnimationPlayState = 'running';
-        colorDiv.style.mozAnimationPlayState = 'running';
-        colorDiv.style.oAnimationPlayState = 'running';
-        colorDiv.style.msAnimationPlayState = 'running';
-        colorDiv.style.animationName = 'fadeIn';
-        colorDiv.style.webkitAnimationName = 'fadeIn';
-        colorDiv.style.mozAnimationName = 'fadeIn';
-        colorDiv.style.oAnimationName = 'fadeIn';
-        colorDiv.style.msAnimationName = 'fadeIn';
         paletteDiv.appendChild(colorDiv);
     }
     // agregamos 250px de height al main para que el div #palette no se salga del viewport
-    document.getElementById('main').style.height = '250px';
+    document.getElementsByTagName('main')[0].style.height = '250px';
     // height del 100% al html
     document.documentElement.style.height = '100%';
 
@@ -187,42 +149,93 @@ function jazminGG(img) {
     //     materialIconsAlts[i].style.color = `rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]})`;
     // }
 
+    // creamos un style con todos los colores de la paleta, los almacenamos en variables :root, recorremos con for
+    let styleColor = document.createElement('style');
+    styleColor.innerHTML = `
+        :root {
+        `;
+    for (let i = 0; i < palette.length; i++) {
+        styleColor.innerHTML += `
+            --color-${i}: rgb(${palette[i][0]}, ${palette[i][1]}, ${palette[i][2]}) !important;
+        `;
+    }
+    styleColor.innerHTML += `
+            --white: rgba(255, 255, 255, .7) !important;
+        }
+    `;
+    document.head.appendChild(styleColor);
+
     // creamos un style con todas las clases mencionadas anteriormente
     let style = document.createElement('style');
     style.innerHTML = `
         .tittle {
-            color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+            color: var(--color-${palette.length - 2});
         }
         .subtittle {
-            color: rgb(${palette[palette.length - 1][0]}, ${palette[palette.length - 1][1]}, ${palette[palette.length - 1][2]}) !important;
+            color: var(--color-${palette.length - 1});
         }
-        .parrafo {
-            color: rgb(${palette[palette.length - 1][0]}, ${palette[palette.length - 1][1]}, ${palette[palette.length - 1][2]}) !important;
+        .paragraph {
+            color: var(--color-${palette.length - 1});
         }
         .label {
-            color: rgb(${palette[3][0]}, ${palette[3][1]}, ${palette[3][2]})  !important;
+            color: var(--color-${palette.length - 3});
         }
         .btn-ui {
-            color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
-            background-color: rgb(${palette[1][0]}, ${palette[1][1]}, ${palette[1][2]}) !important;
+            color: var(--color-${palette.length - 2});
+            background-color: var(--color-1);
         }
         .btn-alt {
-            color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
-            background-color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+            color: var(--color-0);
+            background-color: var(--color-${palette.length - 2});
         }
         .material-icons-ui {
-            color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+            color: var(--color-${palette.length - 2});
         }
         .material-icons-alt {
-            color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+            color: var(--color-0);
         }
-        /* primer color al body y al nav */
+        /* primer color al body y navbar */
         body {
-            background-color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+            background-color: var(--color-0);
         }
-        nav {
-            background-color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+        .navbar {
+            background-color: var(--color-0);
         }
     `;
+    // style.innerHTML = `
+    //     .tittle {
+    //         color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+    //     }
+    //     .subtittle {
+    //         color: rgb(${palette[palette.length - 1][0]}, ${palette[palette.length - 1][1]}, ${palette[palette.length - 1][2]}) !important;
+    //     }
+    //     .parrafo {
+    //         color: rgb(${palette[palette.length - 1][0]}, ${palette[palette.length - 1][1]}, ${palette[palette.length - 1][2]}) !important;
+    //     }
+    //     .label {
+    //         color: rgb(${palette[3][0]}, ${palette[3][1]}, ${palette[3][2]})  !important;
+    //     }
+    //     .btn-ui {
+    //         color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+    //         background-color: rgb(${palette[1][0]}, ${palette[1][1]}, ${palette[1][2]}) !important;
+    //     }
+    //     .btn-alt {
+    //         color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+    //         background-color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+    //     }
+    //     .material-icons-ui {
+    //         color: rgb(${palette[palette.length - 2][0]}, ${palette[palette.length - 2][1]}, ${palette[palette.length - 2][2]}) !important;
+    //     }
+    //     .material-icons-alt {
+    //         color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+    //     }
+    //     /* primer color al body y al nav */
+    //     body {
+    //         background-color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+    //     }
+    //     nav {
+    //         background-color: rgb(${palette[0][0]}, ${palette[0][1]}, ${palette[0][2]}) !important;
+    //     }
+    // `;
     document.head.appendChild(style);
 }
